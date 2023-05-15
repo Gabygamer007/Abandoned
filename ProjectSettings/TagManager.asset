@@ -38,6 +38,21 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Sol
+    uniqueID: 623142041
+    locked: 0
+  - name: Mur
+    uniqueID: 1330643203
+    locked: 0
+  - name: Decorations
+    uniqueID: 3318360201
+    locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Ciel
+    uniqueID: 3348525459
+    locked: 0
+  - name: Eau
+    uniqueID: 1432784973
     locked: 0
