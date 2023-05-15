@@ -52,4 +52,12 @@ public class Joueur : MonoBehaviour
     {
         rig.AddForce(new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")) * vitesse);
     }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        //if (LayerMask.LayerToName(collision.gameObject.layer) == "Zombie")
+        //{
+        //    
+        //}
+    }
 }
