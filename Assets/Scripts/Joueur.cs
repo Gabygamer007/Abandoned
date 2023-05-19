@@ -58,7 +58,8 @@ public class Joueur : MonoBehaviour
 
     private void FixedUpdate()
     {
-        rig.AddForce(new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")) * vitesse);
+        rig.AddForce(new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized * vitesse);
+
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -77,12 +78,6 @@ public class Joueur : MonoBehaviour
                 coeur2.GetComponent<SpriteRenderer>().color = Color.black;
                 StartCoroutine(Invincible());
             }
-            else if (vie == 1)
-            {
-                vie -= 1;
-                coeur1.GetComponent<SpriteRenderer>().color = Color.black;
-                StartCoroutine(Invincible());
-            }
         }
     }
 
@@ -95,35 +90,35 @@ public class Joueur : MonoBehaviour
         changedColor.a = 0.5f;
         spriteRenderer.color = changedColor;
         feetSprite.color = changedColor;
-        yield return new WaitForSeconds(0.25f);
+        yield return new WaitForSeconds(0.375f);
         changedColor.a = 1f;
         spriteRenderer.color = changedColor;
         feetSprite.color = changedColor;
-        yield return new WaitForSeconds(0.25f);
+        yield return new WaitForSeconds(0.375f);
         changedColor.a = 0.5f;
         spriteRenderer.color = changedColor;
         feetSprite.color = changedColor;
-        yield return new WaitForSeconds(0.25f);
+        yield return new WaitForSeconds(0.375f);
         changedColor.a = 1f;
         spriteRenderer.color = changedColor;
         feetSprite.color = changedColor;
-        yield return new WaitForSeconds(0.25f);
+        yield return new WaitForSeconds(0.375f);
         changedColor.a = 0.5f;
         spriteRenderer.color = changedColor;
         feetSprite.color = changedColor;
-        yield return new WaitForSeconds(0.25f);
+        yield return new WaitForSeconds(0.375f);
         changedColor.a = 1f;
         spriteRenderer.color = changedColor;
         feetSprite.color = changedColor;
-        yield return new WaitForSeconds(0.25f);
+        yield return new WaitForSeconds(0.375f);
         changedColor.a = 0.5f;
         spriteRenderer.color = changedColor;
         feetSprite.color = changedColor;
-        yield return new WaitForSeconds(0.25f);
+        yield return new WaitForSeconds(0.375f);
         changedColor.a = 1f;
         spriteRenderer.color = changedColor;
         feetSprite.color = changedColor;
-        yield return new WaitForSeconds(0.25f);
+        yield return new WaitForSeconds(0.375f);
         invincible = false;
     }
 }
