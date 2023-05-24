@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 4602912720182570256}
   - component: {fileID: 8383341092825325959}
   - component: {fileID: -1915446031314487195}
+  - component: {fileID: -5901428534587398222}
   m_Layer: 7
   m_Name: zombie
   m_TagString: Untagged
@@ -141,16 +142,32 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 855521359079638127}
-  m_BodyType: 2
+  m_BodyType: 0
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 0
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!114 &-5901428534587398222
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 855521359079638127}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 251c43ba361637b47b28f5b7185502dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  longueur: 4
+  nomCible: Joueur
+  vitesse: 2
+  prefabSang: {fileID: 400000, guid: bc98890f6028f444eaa7789bde5e2eeb, type: 3}

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Joueur : MonoBehaviour
 {
@@ -11,7 +12,13 @@ public class Joueur : MonoBehaviour
     private int vie = 3;
     public Transform cameraTransform;
     public GameObject feet;
+    private bool mort = false;
+    private SpriteRenderer rendu;
 
+    public Transform fondu;
+
+    [SerializeField]
+    private float taux;
     [SerializeField]
     private Transform coeur1;
     [SerializeField]
@@ -27,11 +34,16 @@ public class Joueur : MonoBehaviour
     [SerializeField]
     private float vitesse;
 
+
     void Start()
     {
         rig = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         animFeet = feet.GetComponent<Animator>();
+
+        rendu = fondu.GetComponent<SpriteRenderer>();
+
+        StartCoroutine(FonduEntre());
     }
 
     // Update is called once per frame
@@ -78,7 +90,20 @@ public class Joueur : MonoBehaviour
                 coeur2.GetComponent<SpriteRenderer>().color = Color.black;
                 StartCoroutine(Invincible());
             }
+            else if (vie == 1)
+            {
+                vie -= 1;
+                coeur1.GetComponent<SpriteRenderer>().color = Color.black;
+                StartCoroutine(FonduSorti());
+                SceneManager.LoadScene("Level_1");
+            }
         }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        StartCoroutine(FonduSorti());
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
 
     IEnumerator Invincible()
@@ -120,5 +145,31 @@ public class Joueur : MonoBehaviour
         feetSprite.color = changedColor;
         yield return new WaitForSeconds(0.375f);
         invincible = false;
+    }
+
+    IEnumerator FonduEntre()
+    {
+        Color colTemp = Color.black;
+        while (rendu.color.a > 0.0f)
+        {
+            colTemp.a -= taux;
+            rendu.color = colTemp;
+            yield return new WaitForEndOfFrame();
+        }
+        colTemp.a = 0.0f;
+        rendu.color = colTemp;
+    }
+
+    IEnumerator FonduSorti()
+    {
+        Color colTemp = rendu.color;
+        while (rendu.color.a < 1.0f)
+        {
+            colTemp.a += taux;
+            rendu.color = colTemp;
+            yield return new WaitForEndOfFrame();
+        }
+        colTemp.a = 1.0f;
+        rendu.color = colTemp;
     }
 }
