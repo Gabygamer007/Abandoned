@@ -50,8 +50,8 @@ public class Zombie : MonoBehaviour
             direction = cible.position - transform.position;
             direction.Normalize();
 
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, longueur, LayerMask.GetMask("Joueur", "Mur"));
-            if (hit.collider != null && cible.GetComponent<Rigidbody2D>())
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, longueur, LayerMask.GetMask("Joueur", "Mur", "Boite"));
+            if (hit.collider != null && cible.GetComponent<BoxCollider2D>())
             {
                 if (LayerMask.LayerToName(hit.transform.gameObject.layer) == "Joueur")
                 {

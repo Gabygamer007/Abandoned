@@ -18,6 +18,10 @@ public class MainMenu : MonoBehaviour
     {
         rendu = fondu.GetComponent<SpriteRenderer>();
 
+        PlayerPrefs.SetInt("nbVie", 3);
+        PlayerPrefs.SetInt("nbBalles", 16);
+        PlayerPrefs.SetString("choix", "");
+
         StartCoroutine(TomberTitre());
     }
 

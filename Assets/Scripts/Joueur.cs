@@ -1,7 +1,7 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class Joueur : MonoBehaviour
 {
@@ -9,11 +9,13 @@ public class Joueur : MonoBehaviour
     private Animator anim;
     private Animator animFeet;
     private bool invincible = false;
-    private int vie = 3;
+    public int vie = 3;
     public Transform cameraTransform;
     public GameObject feet;
-    private bool mort = false;
     private SpriteRenderer rendu;
+    private bool mort = false;
+    public int ballesRestantes = 16;
+    private bool peuxTirer = true;
 
     public Transform fondu;
 
@@ -33,6 +35,8 @@ public class Joueur : MonoBehaviour
     private Transform bulletSource;
     [SerializeField]
     private float vitesse;
+    [SerializeField]
+    private Transform texteBallesRestantes;
 
 
     void Start()
@@ -43,29 +47,57 @@ public class Joueur : MonoBehaviour
 
         rendu = fondu.GetComponent<SpriteRenderer>();
 
+        texteBallesRestantes.GetComponent<TMP_Text>().text = ballesRestantes.ToString();
+
+        if (SceneManager.GetActiveScene() == SceneManager.GetSceneByName("Level_2"))
+        {
+            ballesRestantes = PlayerPrefs.GetInt("nbBalles");
+            vie = PlayerPrefs.GetInt("nbVie");
+            if (PlayerPrefs.GetString("choix") == "balles")
+            {
+                ballesRestantes = 16;
+            }
+            else if (PlayerPrefs.GetString("choix") == "vie")
+            {
+                vie = 3;
+            }
+        }
+
         StartCoroutine(FonduEntre());
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (rig.velocity.magnitude > 0)
-            anim.SetFloat("Bouger", rig.velocity.magnitude);
-        if (Input.GetKeyDown(KeyCode.Mouse0)) { 
-            anim.SetInteger("Tirer", 1);
-            Instantiate(prefabBullet, bulletSource.position, Quaternion.identity);
-            Instantiate(prefabFlash, bulletSource.position, Quaternion.identity);
+        if (!mort)
+        {
+            if (rig.velocity.magnitude > 0)
+                anim.SetFloat("Bouger", rig.velocity.magnitude);
+            if (Input.GetKeyDown(KeyCode.Mouse0) && peuxTirer)
+            {
+                anim.SetInteger("Tirer", 1);
+                if (ballesRestantes > 0)
+                {
+                    Instantiate(prefabBullet, bulletSource.position, Quaternion.identity);
+                    Instantiate(prefabFlash, bulletSource.position, Quaternion.identity);
+                    ballesRestantes -= 1;
+                    StartCoroutine(AttendreTir());
+                }
+
+            }
+            else
+                anim.SetInteger("Tirer", 0);
+            animFeet.SetFloat("Bouger", rig.velocity.magnitude);
+
+            Vector2 lookDir = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
+            float angle = Mathf.Atan2(lookDir.y, lookDir.x) * Mathf.Rad2Deg;
+            Quaternion rotation = Quaternion.AngleAxis(angle + 5f, Vector3.forward);
+            transform.rotation = rotation;
+
+            cameraTransform.position = new Vector3(transform.position.x, transform.position.y, cameraTransform.position.z);
+            setCoeurs();
+            setBalles();
         }
-        else
-            anim.SetInteger("Tirer", 0);
-        animFeet.SetFloat("Bouger", rig.velocity.magnitude);
-
-        Vector2 lookDir = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
-        float angle = Mathf.Atan2(lookDir.y, lookDir.x) * Mathf.Rad2Deg;
-        Quaternion rotation = Quaternion.AngleAxis(angle + 5f, Vector3.forward);
-        transform.rotation = rotation;
-
-        cameraTransform.position = new Vector3(transform.position.x, transform.position.y, cameraTransform.position.z);
     }
 
     private void FixedUpdate()
@@ -78,30 +110,37 @@ public class Joueur : MonoBehaviour
     {
         if (LayerMask.LayerToName(collision.gameObject.layer) == "Zombie" && !invincible)
         {
-            if (vie == 3)
-            {
-                vie -= 1;
-                coeur3.GetComponent<SpriteRenderer>().color = Color.black;
-                StartCoroutine(Invincible());
-            }
-            else if (vie == 2)
-            {
-                vie -= 1;
-                coeur2.GetComponent<SpriteRenderer>().color = Color.black;
-                StartCoroutine(Invincible());
-            }
-            else if (vie == 1)
-            {
-                vie -= 1;
-                coeur1.GetComponent<SpriteRenderer>().color = Color.black;
-                StartCoroutine(FonduSorti());
-                SceneManager.LoadScene("Level_1");
-            }
+            vie -= 1;
+            StartCoroutine(Invincible());
         }
+    }
+
+    private void setCoeurs()
+    {
+        if (vie < 3)
+        {
+            coeur3.GetComponent<SpriteRenderer>().color = Color.black;
+        }
+        if (vie < 2)
+        {
+            coeur2.GetComponent<SpriteRenderer>().color = Color.black;
+        }
+        if (vie < 1)
+        {
+            coeur1.GetComponent<SpriteRenderer>().color = Color.black;
+            StartCoroutine(Mort());
+        }
+    }
+
+    private void setBalles()
+    {
+        texteBallesRestantes.GetComponent<TMP_Text>().text = ballesRestantes.ToString();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        PlayerPrefs.SetInt("nbVie", vie);
+        PlayerPrefs.SetInt("nbBalles", ballesRestantes);
         StartCoroutine(FonduSorti());
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
@@ -171,5 +210,21 @@ public class Joueur : MonoBehaviour
         }
         colTemp.a = 1.0f;
         rendu.color = colTemp;
+    }
+    
+    IEnumerator AttendreTir()
+    {
+        peuxTirer = false;
+        yield return new WaitForSeconds(0.5f);
+        peuxTirer = true;
+    }
+
+    IEnumerator Mort()
+    {
+        mort = true;
+        Destroy(gameObject.GetComponent<BoxCollider2D>());
+        StartCoroutine(FonduSorti());
+        yield return new WaitForSeconds(2f);
+        SceneManager.LoadScene(1);
     }
 }
